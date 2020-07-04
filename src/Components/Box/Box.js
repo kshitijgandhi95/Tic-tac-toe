@@ -4,14 +4,16 @@ class Box extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            color: "blue"
+            color: "blue",
+            isUsed: false
         }
     }
 
     changeColor() {
         this.setState((prevState, props) => {
             return {
-                color: props.backColor
+                color: props.backColor,
+                isUsed: true
             }
         })
     }
@@ -27,8 +29,10 @@ class Box extends Component {
         cssObj.backgroundColor = this.state.color
         return (
             <button style={cssObj} onClick={() => {
-                this.changeColor()
-                this.props.onClick();
+                if (!this.state.isUsed) {
+                    this.changeColor()
+                    this.props.onClick();
+                }
             }
             }>
             </button>
