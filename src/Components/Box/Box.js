@@ -11,7 +11,7 @@ class Box extends Component {
     changeColor() {
         this.setState((prevState, props) => {
             return {
-                color: this.props.backColor
+                color: props.backColor
             }
         })
     }
@@ -28,7 +28,7 @@ class Box extends Component {
         return (
             <button style={cssObj} onClick={() => {
                 this.changeColor()
-                // this.props.onClick();
+                this.props.onClick();
             }
             }>
             </button>
