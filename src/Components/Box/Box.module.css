@@ -1,0 +1,16 @@
+.Wd{
+  width: 100px;
+  border: 1px solid green;
+  padding: 1px;
+  margin: 1px;
+  height: 100px;
+  background-color: blue
+}
+
+.red{
+  background-color: red
+}
+
+.green{
+  background-color: green
+}
