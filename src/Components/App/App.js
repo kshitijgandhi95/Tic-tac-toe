@@ -14,6 +14,20 @@ class App extends Component {
     }
   }
 
+  onFirstPlayerNameChange = event => {
+    event.persist();
+    this.setState((prevState, props) => {
+      return ({ firstPlayer: event.target.value });
+    })
+  }
+
+  onSecondPlayerNameChange = event => {
+    event.persist();
+    this.setState((prevState, props) => {
+      return ({ secondPlayer: event.target.value });
+    })
+  }
+
   onClickHandler (event) {
     let player = null;
     this.setState ((prevState, props) => {
@@ -63,6 +77,10 @@ class App extends Component {
   render() { 
     return (
       <div>
+        <div>
+          <input type="text" value={this.state.firstPlayer} onChange={this.onFirstPlayerNameChange}></input>
+          <input type="text" value={this.state.secondPlayer} onChange={this.onSecondPlayerNameChange}></input>
+        </div>
         <div>
           <Box onClick={this.onClickHandler.bind(this, "1")} backColor={this.state.count%2 ? "white":"black"}></Box>
           <Box onClick={this.onClickHandler.bind(this, "2")} backColor={this.state.count%2 ? "white":"black"}></Box>
