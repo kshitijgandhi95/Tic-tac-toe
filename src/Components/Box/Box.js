@@ -5,17 +5,31 @@ class Box extends Component {
         super(props)
         this.state = {
             color: "blue",
-            isUsed: false
+            isUsed: false,
+            fix: false
         }
     }
 
-    changeColor() {
+    changeState() {
         this.setState((prevState, props) => {
             return {
                 color: props.backColor,
-                isUsed: true
+                isUsed: true,
+                fix: false
             }
         })
+    }
+
+    reset = () => {
+        if (!this.state.fix) {
+            this.setState (() => {
+                return ({
+                    isUsed: false,
+                    color: "blue",
+                    fix: true
+                })
+            })
+        }
     }
 
     render() {
@@ -26,11 +40,14 @@ class Box extends Component {
             margin: "1px",
             height: "100px",
         }
+        if (!this.props.start) {
+            this.reset()
+        }
         cssObj.backgroundColor = this.state.color
         return (
             <button style={cssObj} onClick={() => {
-                if (!this.state.isUsed) {
-                    this.changeColor()
+                if (!this.state.isUsed && this.props.start) {
+                    this.changeState()
                     this.props.onClick();
                 }
             }
