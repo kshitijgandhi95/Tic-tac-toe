@@ -13,7 +13,7 @@ class App extends Component {
     this.firstPlayer = {};
     this.secondPlayer = {};
     this.state = {
-      count: 1,
+      count: 0,
       firstPlayer: "Player-1",
       secondPlayer: "Player-2",
       start: false,
@@ -27,7 +27,7 @@ class App extends Component {
   reset() {
     return (
       {
-        count: 1,
+        count: 0,
         rstPlayer: "Player-1",
         secondPlayer: "Player-2",
         start: false,
@@ -167,7 +167,7 @@ class App extends Component {
         return (
           {
             start: false,
-            count: 1
+            count: 0
           }
         )
       })
