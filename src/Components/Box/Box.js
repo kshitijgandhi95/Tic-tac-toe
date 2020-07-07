@@ -22,7 +22,7 @@ class Box extends Component {
 
     reset = () => {
         if (!this.state.fix) {
-            this.setState (() => {
+            this.setState(() => {
                 return ({
                     isUsed: false,
                     color: "blue",
@@ -50,9 +50,17 @@ class Box extends Component {
                     this.changeState()
                     this.props.onClick();
                 }
+                if (!this.props.start) {
+                    // this.reset()
+                    this.props.showStartModal()
+                }
+                if (this.state.isUsed) {
+                    this.props.showAlreadyClickedModal()
+                }
             }
             }>
             </button>
+
         )
     }
 }

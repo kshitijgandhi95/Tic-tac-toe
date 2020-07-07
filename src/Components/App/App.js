@@ -3,18 +3,40 @@ import appClasses from './App.css';
 import Box from './../Box/Box'
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ShowStartModal from './../../Modals/StartGame'
+import ShowEndModal from './../../Modals/EndGame'
+import ShowClickedModal from './../../Modals/AlreadyClicked'
 
 class App extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.firstPlayer = {};
     this.secondPlayer = {};
     this.state = {
-      count:1,
+      count: 1,
       firstPlayer: "Player-1",
       secondPlayer: "Player-2",
-      start: false
+      start: false,
+      showStartModal: false,
+      showEndModal: false,
+      winner: null,
+      showClickedModal: false
     }
+  }
+
+  reset() {
+    return (
+      {
+        count: 1,
+        rstPlayer: "Player-1",
+        secondPlayer: "Player-2",
+        start: false,
+        showStartModal: false,
+        showEndModal: false,
+        winner: null,
+        showClickedModal: false
+      }
+    )
   }
 
   onFirstPlayerNameChange = event => {
@@ -33,10 +55,8 @@ class App extends Component {
 
   onClickHandler = (event) => {
     let player = null;
-    this.setState ((prevState, props) => {
-      return {count:prevState.count+1}
-    })
-    if (this.state.count%2) {
+    let count = this.state.count+1;
+    if (count % 2) {
       this.firstPlayer[event] = true;
       player = this.state.firstPlayer
     }
@@ -44,25 +64,34 @@ class App extends Component {
       this.secondPlayer[event] = true;
       player = this.state.secondPlayer
     }
-    if (this.state.count == 10) {
-      console.log ("Game over. It's a draw")
+    if (count == 10) {
       this.firstPlayer = {};
       this.secondPlayer = {};
-      this.setState ((prevState, props) => {
-        return ({
-          count:1,
-          firstPlayer: "Player-1",
-          secondPlayer: "Player-2",
-          start: true
-        })
-      })   
+      this.setState((prevState, props) => {
+        let state = this.reset()
+        state.winner = "It's a draw"
+        state.showEndModal = true;
+        this.firstPlayer = {};
+        this.secondPlayer = {};
+        return state;
+      })
     }
-    if (this.isWinner(this.state.count%2?this.firstPlayer:this.secondPlayer)) {
-      console.log (`${player} won`)
+    if (this.isWinner(count % 2 ? this.firstPlayer : this.secondPlayer)) {
+      this.setState (() => {
+        let state = this.reset()
+        state.winner = `${player} has won`
+        state.showEndModal = true;
+        this.firstPlayer = {};
+        this.secondPlayer = {};
+        return state;
+      })
     }
+    this.setState((prevState, props) => {
+      return { count: prevState.count + 1 }
+    })
   }
 
-  isWinner (playerObj) {
+  isWinner(playerObj) {
     if (playerObj["1"] && playerObj["2"] && playerObj["3"]) {
       return true;
     }
@@ -90,10 +119,39 @@ class App extends Component {
     return false;
   }
 
-  startGame  = (event) => {
-    event.persist();
+  closeStartModal =  () => {
+        this.setState (() => {
+            return (
+                {
+                    showStartModal:false
+                }
+            )
+        })
+    }
+
+    closeClickedModal =  () => {
+          this.setState (() => {
+              return (
+                  {
+                      showClickedModal:false
+                  }
+              )
+          })
+      }
+
+    closeEndModal =  () => {
+          this.setState (() => {
+              return (
+                  {
+                      showEndModal:false
+                  }
+              )
+          })
+      }
+
+  startGame = (event) => {
     if (!this.state.start) {
-      this.setState (() => {
+      this.setState(() => {
         return (
           {
             start: true
@@ -105,18 +163,40 @@ class App extends Component {
 
   endGame = (event) => {
     if (this.state.start) {
-      this.setState (() => {
+      this.setState(() => {
         return (
           {
             start: false,
-            count: 0
+            count: 1
           }
         )
       })
     }
   }
 
-  render() { 
+  showStartModal = () => {
+    this.setState ((prevState, props) => {
+        return (
+          {
+            showStartModal: true
+          }
+        )
+        
+    })
+}
+
+  showClickedModal = () => {
+    this.setState ((prevState, props) => {
+        return (
+          {
+            showClickedModal: true
+          }
+        )
+        
+    })
+}
+
+  render() {
     return (
       <div>
         <div>
@@ -124,23 +204,32 @@ class App extends Component {
           <input type="text" value={this.state.secondPlayer} onChange={this.onSecondPlayerNameChange}></input>
         </div>
         <div>
-          <Box onClick={this.onClickHandler.bind(this, "1")} backColor={this.state.count%2 ? "white":"black"} start={this.state.start}></Box>
-          <Box onClick={this.onClickHandler.bind(this, "2")} backColor={this.state.count%2 ? "white":"black"} start={this.state.start}></Box>
-          <Box onClick={this.onClickHandler.bind(this, "3")} backColor={this.state.count%2 ? "white":"black"} start={this.state.start}></Box>
+          <Box onClick={this.onClickHandler.bind(this, "1")} backColor={this.state.count % 2 ? "white" : "black"} start={this.state.start} showStartModal={this.showStartModal.bind(this)} showAlreadyClickedModal={this.showClickedModal.bind(this)}></Box>
+          <Box onClick={this.onClickHandler.bind(this, "2")} backColor={this.state.count % 2 ? "white" : "black"} start={this.state.start} showStartModal={this.showStartModal.bind(this)} showAlreadyClickedModal={this.showClickedModal.bind(this)}></Box>
+          <Box onClick={this.onClickHandler.bind(this, "3")} backColor={this.state.count % 2 ? "white" : "black"} start={this.state.start} showStartModal={this.showStartModal.bind(this)} showAlreadyClickedModal={this.showClickedModal.bind(this)}></Box>
         </div>
         <div>
-          <Box onClick={this.onClickHandler.bind(this, "4")} backColor={this.state.count%2 ? "white":"black"} start={this.state.start}></Box>
-          <Box onClick={this.onClickHandler.bind(this, "5")} backColor={this.state.count%2 ? "white":"black"} start={this.state.start}></Box>
-          <Box onClick={this.onClickHandler.bind(this, "6")} backColor={this.state.count%2 ? "white":"black"} start={this.state.start}></Box>
+          <Box onClick={this.onClickHandler.bind(this, "4")} backColor={this.state.count % 2 ? "white" : "black"} start={this.state.start} showStartModal={this.showStartModal.bind(this)} showAlreadyClickedModal={this.showClickedModal.bind(this)}></Box>
+          <Box onClick={this.onClickHandler.bind(this, "5")} backColor={this.state.count % 2 ? "white" : "black"} start={this.state.start} showStartModal={this.showStartModal.bind(this)} showAlreadyClickedModal={this.showClickedModal.bind(this)}></Box>
+          <Box onClick={this.onClickHandler.bind(this, "6")} backColor={this.state.count % 2 ? "white" : "black"} start={this.state.start} showStartModal={this.showStartModal.bind(this)} showAlreadyClickedModal={this.showClickedModal.bind(this)}></Box>
         </div>
         <div>
-          <Box onClick={this.onClickHandler.bind(this, "7")} backColor={this.state.count%2 ? "white":"black"} start={this.state.start}></Box>
-          <Box onClick={this.onClickHandler.bind(this, "8")} backColor={this.state.count%2 ? "white":"black"} start={this.state.start}></Box>
-          <Box onClick={this.onClickHandler.bind(this, "9")} backColor={this.state.count%2 ? "white":"black"} start={this.state.start}></Box>
+          <Box onClick={this.onClickHandler.bind(this, "7")} backColor={this.state.count % 2 ? "white" : "black"} start={this.state.start} showStartModal={this.showStartModal.bind(this)} showAlreadyClickedModal={this.showClickedModal.bind(this)}></Box>
+          <Box onClick={this.onClickHandler.bind(this, "8")} backColor={this.state.count % 2 ? "white" : "black"} start={this.state.start} showStartModal={this.showStartModal.bind(this)} showAlreadyClickedModal={this.showClickedModal.bind(this)}></Box>
+          <Box onClick={this.onClickHandler.bind(this, "9")} backColor={this.state.count % 2 ? "white" : "black"} start={this.state.start} showStartModal={this.showStartModal.bind(this)} showAlreadyClickedModal={this.showClickedModal.bind(this)}></Box>
         </div>
         <div>
-        <Button variant="success" onClick={this.startGame}>Start</Button>
-        <Button variant="danger" onClick={this.endGame}>Reset</Button>
+          <Button variant="success" onClick={this.startGame}>Start</Button>
+          <Button variant="danger" onClick={this.endGame}>Reset</Button>
+        </div>
+        <div>
+          {this.state.showStartModal ? <ShowStartModal show={true} closeStartModal={this.closeStartModal.bind(this)}/> : null}
+        </div>
+        <div>
+          {this.state.showEndModal ? <ShowEndModal show={true} closeEndModal={this.closeEndModal.bind(this)} winner={this.state.winner}/> : null}
+        </div>
+        <div>
+          {this.state.showClickedModal ? <ShowClickedModal show={true} closeClickedModal={this.closeClickedModal.bind(this)}/> : null}
         </div>
       </div>
     )
